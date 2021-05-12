@@ -18,9 +18,9 @@ void Player::moveLeft()
 }
 void Player::moveUp()
 {
-	coordinates.setY(coordinates.getY() + 1);
+	coordinates.setY(coordinates.getY() - 1);
 }
 void Player::moveDown()
 {
-	coordinates.setY(coordinates.getY() - 1);
+	coordinates.setY(coordinates.getY() + 1);
 }

@@ -3,7 +3,7 @@
 void Engine::update_frame() 
 {
 	gameWindow.clear(Color(BACKGROUND));
-	//Рисуем блоки
+	//ГђГЁГ±ГіГҐГ¬ ГЎГ«Г®ГЄГЁ
 	RectangleShape* rectangles = new RectangleShape[blocks.size()];
 
 	for (int i = 0; i < blocks.size(); i++)
@@ -16,7 +16,7 @@ void Engine::update_frame()
 		gameWindow.draw(rectangles[i]);
 	}
 
-	//Рисуем персонажа
+	//ГђГЁГ±ГіГҐГ¬ ГЇГҐГ°Г±Г®Г­Г Г¦Г 
 	CircleShape head;
 	RectangleShape body;
 
@@ -30,7 +30,7 @@ void Engine::update_frame()
 
 	gameWindow.draw(head);
 	gameWindow.draw(body);
-	//Отображаем на экране
+	//ГЋГІГ®ГЎГ°Г Г¦Г ГҐГ¬ Г­Г  ГЅГЄГ°Г Г­ГҐ
 	gameWindow.display();
 
 	delete[] rectangles;
@@ -67,25 +67,35 @@ void Engine::start_game()
 		}
 
 		update_frame();
-		
-		if (!(counter++ % 5))
+
+		Sleep(500);
+	}
+}
+
+void Engine::control_enter()
+{
+
+	if (ev.type == Event::KeyPressed)
+	{
+		switch (ev.key.code)
 		{
-			switch (0)
-			{
-			case 0:
-				movePlayerDown(player.get_coordinates()->getX(), player.get_coordinates()->getY() - 1);
-				break;
-			case 1:
-				movePlayerUp(player.get_coordinates()->getX(), player.get_coordinates()->getY() + 1);
-				break;
-			case 2:
-				movePlayerLeft(player.get_coordinates()->getX() - 1, player.get_coordinates()->getY());
-				break;
-			case 3:
-				movePlayerRight(player.get_coordinates()->getX() + 1, player.get_coordinates()->getY());
-				break;
-			}
+		case Keyboard::Key::Down:
+			player.moveDown();
+			break;
+			
+		case Keyboard::Key::Up:
+			player.moveUp();
+			break;
+
+		case Keyboard::Key::Left:
+			player.moveLeft();
+			break;
+
+		case Keyboard::Key::Right:
+			player.moveRight();
+			break;
 		}
+
 		Sleep(500);
 	}
 }
