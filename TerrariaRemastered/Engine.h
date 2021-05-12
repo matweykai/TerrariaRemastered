@@ -29,17 +29,12 @@ class Engine
 	Player player{ WIDTH / 2, HEIGHT / 2 };
 	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT), "TerrariaRemastered" };
 
+	char current_frame[HEIGHT][WIDTH];
+
 	void init_map();
 	void update_frame();
 	void control_enter();
 public:
 	void start_game();
-
-	bool is_collided(unsigned int x, unsigned int y);
-
-	void movePlayerRight(unsigned int x, unsigned int y);
-	void movePlayerLeft(unsigned int x, unsigned int y);
-	void movePlayerUp(unsigned int x, unsigned int y);
-	void movePlayerDown(unsigned int x, unsigned int y);
 };
 
