@@ -74,29 +74,32 @@ void Engine::start_game()
 
 void Engine::control_enter()
 {
-
-	if (ev.type == Event::KeyPressed)
+	while (gameWindow.isOpen()) 
 	{
-		switch (ev.key.code)
+		Event ev;
+		while (gameWindow.pollEvent(ev))
 		{
+			if (ev.type == Event::KeyPressed)
+			{
+				switch (ev.key.code)
+				{
+				case Keyboard::Key::Down:
+					player.moveDown();
+					break;
 
-		case Keyboard::Key::Down:
-			player.moveDown();
-			break;
-			
-		case Keyboard::Key::Up:
-			player.moveUp();
-			break;
+				case Keyboard::Key::Up:
+					player.moveUp();
+					break;
 
-		case Keyboard::Key::Left:
-			player.moveLeft();
-			break;
+				case Keyboard::Key::Left:
+					player.moveLeft();
+					break;
 
-		case Keyboard::Key::Right:
-			player.moveRight();
-			break;
-
+				case Keyboard::Key::Right:
+					player.moveRight();
+					break;
+				}
+				Sleep(500);
+			}
 		}
-
-		Sleep(500);
 }
