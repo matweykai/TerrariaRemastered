@@ -80,19 +80,19 @@ void Engine::control_enter()
 		switch (ev.key.code)
 		{
 
-		case Keyboard::Key::S:
+		case Keyboard::Key::Down:
 			player.moveDown();
 			break;
 			
-		case Keyboard::Key::W:
+		case Keyboard::Key::Up:
 			player.moveUp();
 			break;
 
-		case Keyboard::Key::A:
+		case Keyboard::Key::Left:
 			player.moveLeft();
 			break;
 
-		case Keyboard::Key::D:
+		case Keyboard::Key::Right:
 			player.moveRight();
 			break;
 
