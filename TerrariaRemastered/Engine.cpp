@@ -3,7 +3,7 @@
 void Engine::update_frame() 
 {
 	gameWindow.clear(Color(BACKGROUND));
-	//Рисуем блоки
+	//ГђГЁГ±ГіГҐГ¬ ГЎГ«Г®ГЄГЁ
 	RectangleShape* rectangles = new RectangleShape[blocks.size()];
 
 	for (int i = 0; i < blocks.size(); i++)
@@ -16,7 +16,7 @@ void Engine::update_frame()
 		gameWindow.draw(rectangles[i]);
 	}
 
-	//Рисуем персонажа
+	//ГђГЁГ±ГіГҐГ¬ ГЇГҐГ°Г±Г®Г­Г Г¦Г 
 	CircleShape head;
 	RectangleShape body;
 
@@ -30,7 +30,7 @@ void Engine::update_frame()
 
 	gameWindow.draw(head);
 	gameWindow.draw(body);
-	//Отображаем на экране
+	//ГЋГІГ®ГЎГ°Г Г¦Г ГҐГ¬ Г­Г  ГЅГЄГ°Г Г­ГҐ
 	gameWindow.display();
 
 	delete[] rectangles;
@@ -79,7 +79,6 @@ void Engine::control_enter()
 	{
 		switch (ev.key.code)
 		{
-
 		case Keyboard::Key::Down:
 			player.moveDown();
 			break;
@@ -95,8 +94,39 @@ void Engine::control_enter()
 		case Keyboard::Key::Right:
 			player.moveRight();
 			break;
-
 		}
 
 		Sleep(500);
+	}
+}
+
+bool Engine::is_collided(unsigned int x, unsigned int y)
+{
+	vector<Block>::iterator iter = find_if(blocks.begin(), blocks.end(), [x, y](Block obj)
+		{ return obj.get_coordinates()->getX() == x && obj.get_coordinates()->getY() == y; });
+	return iter != blocks.end();
+}
+
+void Engine::movePlayerRight(unsigned int x, unsigned int y)
+{
+	if (!is_collided(x, y) && x < WIDTH)
+		player.moveRight();
+}
+
+void Engine::movePlayerLeft(unsigned int x, unsigned int y)
+{
+	if (!is_collided(x, y) && x >= 0)
+		player.moveLeft();
+}
+
+void Engine::movePlayerUp(unsigned int x, unsigned int y)
+{
+	if (!is_collided(x, y) && y < HEIGHT)
+		player.moveUp();
+}
+
+void Engine::movePlayerDown(unsigned int x, unsigned int y)
+{
+	if (!is_collided(x, y) && y >= 0)
+		player.moveDown();
 }
