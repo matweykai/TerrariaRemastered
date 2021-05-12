@@ -70,22 +70,53 @@ void Engine::start_game()
 		
 		if (!(counter++ % 5))
 		{
-			switch (rand() % 4)
+			switch (0)
 			{
 			case 0:
-				player.moveDown();
+				movePlayerDown(player.get_coordinates()->getX(), player.get_coordinates()->getY() - 1);
 				break;
 			case 1:
-				player.moveUp();
+				movePlayerUp(player.get_coordinates()->getX(), player.get_coordinates()->getY() + 1);
 				break;
 			case 2:
-				player.moveLeft();
+				movePlayerLeft(player.get_coordinates()->getX() - 1, player.get_coordinates()->getY());
 				break;
 			case 3:
-				player.moveRight();
+				movePlayerRight(player.get_coordinates()->getX() + 1, player.get_coordinates()->getY());
 				break;
 			}
 		}
 		Sleep(500);
 	}
+}
+
+bool Engine::is_collided(unsigned int x, unsigned int y)
+{
+	vector<Block>::iterator iter = find_if(blocks.begin(), blocks.end(), [x, y](Block obj)
+		{ return obj.get_coordinates()->getX() == x && obj.get_coordinates()->getY() == y; });
+	return iter != blocks.end();
+}
+
+void Engine::movePlayerRight(unsigned int x, unsigned int y)
+{
+	if (!is_collided(x, y) && x < WIDTH)
+		player.moveRight();
+}
+
+void Engine::movePlayerLeft(unsigned int x, unsigned int y)
+{
+	if (!is_collided(x, y) && x >= 0)
+		player.moveLeft();
+}
+
+void Engine::movePlayerUp(unsigned int x, unsigned int y)
+{
+	if (!is_collided(x, y) && y < HEIGHT)
+		player.moveUp();
+}
+
+void Engine::movePlayerDown(unsigned int x, unsigned int y)
+{
+	if (!is_collided(x, y) && y >= 0)
+		player.moveDown();
 }
