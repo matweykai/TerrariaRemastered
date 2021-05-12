@@ -67,25 +67,36 @@ void Engine::start_game()
 		}
 
 		update_frame();
-		
-		if (!(counter++ % 5))
-		{
-			switch (rand() % 4)
-			{
-			case 0:
-				player.moveDown();
-				break;
-			case 1:
-				player.moveUp();
-				break;
-			case 2:
-				player.moveLeft();
-				break;
-			case 3:
-				player.moveRight();
-				break;
-			}
-		}
+
 		Sleep(500);
 	}
+}
+
+void Engine::control_enter()
+{
+
+	if (ev.type == Event::KeyPressed)
+	{
+		switch (ev.key.code)
+		{
+
+		case Keyboard::Key::S:
+			player.moveDown();
+			break;
+			
+		case Keyboard::Key::W:
+			player.moveUp();
+			break;
+
+		case Keyboard::Key::A:
+			player.moveLeft();
+			break;
+
+		case Keyboard::Key::D:
+			player.moveRight();
+			break;
+
+		}
+
+		Sleep(500);
 }
