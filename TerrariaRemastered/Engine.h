@@ -37,9 +37,16 @@ public:
 
 	bool is_collided(unsigned int x, unsigned int y);
 
+<<<<<<< Updated upstream
 	void movePlayerRight(unsigned int x, unsigned int y);
 	void movePlayerLeft(unsigned int x, unsigned int y);
 	void movePlayerUp(unsigned int x, unsigned int y);
 	void movePlayerDown(unsigned int x, unsigned int y);
+=======
+	void movePlayerRight();
+	void movePlayerLeft();
+	void movePlayerUp();
+	void movePlayerDown();
+>>>>>>> Stashed changes
 };
 

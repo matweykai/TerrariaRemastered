@@ -35,6 +35,7 @@ void Engine::update_frame()
 
 	delete[] rectangles;
 }
+
 void Engine::init_map()
 {
 	for (int i = 0; i < WIDTH; i++)
@@ -55,7 +56,9 @@ void Engine::start_game()
 
 	init_map();
 
-	int counter = 0;	//FOR TESTING
+	control_enter();
+
+	/*int counter = 0;	//FOR TESTING
 
 	while (gameWindow.isOpen())
 	{
@@ -69,16 +72,18 @@ void Engine::start_game()
 		update_frame();
 
 		Sleep(500);
-	}
+	}*/
 }
 
 void Engine::control_enter()
 {
-
-	if (ev.type == Event::KeyPressed)
+	while (gameWindow.isOpen())
 	{
-		switch (ev.key.code)
+		update_frame();
+		Event ev;
+		while (gameWindow.pollEvent(ev))
 		{
+<<<<<<< Updated upstream
 		case Keyboard::Key::Down:
 			player.moveDown();
 			break;
@@ -86,11 +91,50 @@ void Engine::control_enter()
 		case Keyboard::Key::Up:
 			player.moveUp();
 			break;
+=======
+			if (ev.type == Event::KeyPressed)
+			{
+				switch (ev.key.code)
+				{
+				case Keyboard::Key::Down:
+					movePlayerDown();
+					break;
 
-		case Keyboard::Key::Left:
-			player.moveLeft();
-			break;
+				case Keyboard::Key::Up:
+					movePlayerUp();
+					break;
 
+				case Keyboard::Key::Left:
+					movePlayerLeft();
+					break;
+
+				case Keyboard::Key::Right:
+					movePlayerRight();
+					break;
+				}
+				//update_frame();
+				Sleep(500);
+			}
+		}
+	}
+}
+
+bool Engine::is_collided(unsigned int x, unsigned int y)
+{
+	vector<Block>::iterator iter = find_if(blocks.begin(), blocks.end(), [x, y](Block obj)
+		{ return obj.get_coordinates()->getX() == x && obj.get_coordinates()->getY() == y; });
+	return iter != blocks.end();
+}
+>>>>>>> Stashed changes
+
+void Engine::movePlayerRight()
+{
+	if (!is_collided(player.get_coordinates()->getX() + 1, player.get_coordinates()->getY()) &&
+		player.get_coordinates()->getX() + 1 < WIDTH)
+		player.moveRight();
+}
+
+<<<<<<< Updated upstream
 		case Keyboard::Key::Right:
 			player.moveRight();
 			break;
@@ -128,5 +172,25 @@ void Engine::movePlayerUp(unsigned int x, unsigned int y)
 void Engine::movePlayerDown(unsigned int x, unsigned int y)
 {
 	if (!is_collided(x, y) && y >= 0)
+=======
+void Engine::movePlayerLeft()
+{
+	if (!is_collided(player.get_coordinates()->getX() - 1, player.get_coordinates()->getY()) &&
+		player.get_coordinates()->getX() >= 0)
+		player.moveLeft();
+}
+
+void Engine::movePlayerUp()
+{
+	if (!is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() - 1) &&
+		player.get_coordinates()->getY() >= 0)
+		player.moveUp();
+}
+
+void Engine::movePlayerDown()
+{
+	if (!is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() + 1) &&
+		player.get_coordinates()->getY() < HEIGHT)
+>>>>>>> Stashed changes
 		player.moveDown();
 }
