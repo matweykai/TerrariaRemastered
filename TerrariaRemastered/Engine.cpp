@@ -48,7 +48,6 @@ void Engine::init_map()
 		blocks.push_back(Block(i, 8, Color(50, 30, 1)));
 		blocks.push_back(Block(i, 9, Color(50, 30, 1)));
 	}
-	//blocks.push_back(Block());
 }
 void Engine::start_game() 
 {
@@ -58,7 +57,7 @@ void Engine::start_game()
 
 	control_enter();
 
-	/*int counter = 0;	//FOR TESTING
+	int counter = 0;	//FOR TESTING
 
 	while (gameWindow.isOpen())
 	{
@@ -72,26 +71,16 @@ void Engine::start_game()
 		update_frame();
 
 		Sleep(500);
-	}*/
+	}
 }
 
 void Engine::control_enter()
 {
-	while (gameWindow.isOpen())
+	while (gameWindow.isOpen()) 
 	{
-		update_frame();
 		Event ev;
 		while (gameWindow.pollEvent(ev))
 		{
-<<<<<<< Updated upstream
-		case Keyboard::Key::Down:
-			player.moveDown();
-			break;
-			
-		case Keyboard::Key::Up:
-			player.moveUp();
-			break;
-=======
 			if (ev.type == Event::KeyPressed)
 			{
 				switch (ev.key.code)
@@ -112,7 +101,6 @@ void Engine::control_enter()
 					movePlayerRight();
 					break;
 				}
-				//update_frame();
 				Sleep(500);
 			}
 		}
@@ -125,7 +113,6 @@ bool Engine::is_collided(unsigned int x, unsigned int y)
 		{ return obj.get_coordinates()->getX() == x && obj.get_coordinates()->getY() == y; });
 	return iter != blocks.end();
 }
->>>>>>> Stashed changes
 
 void Engine::movePlayerRight()
 {
@@ -134,45 +121,6 @@ void Engine::movePlayerRight()
 		player.moveRight();
 }
 
-<<<<<<< Updated upstream
-		case Keyboard::Key::Right:
-			player.moveRight();
-			break;
-		}
-
-		Sleep(500);
-	}
-}
-
-bool Engine::is_collided(unsigned int x, unsigned int y)
-{
-	vector<Block>::iterator iter = find_if(blocks.begin(), blocks.end(), [x, y](Block obj)
-		{ return obj.get_coordinates()->getX() == x && obj.get_coordinates()->getY() == y; });
-	return iter != blocks.end();
-}
-
-void Engine::movePlayerRight(unsigned int x, unsigned int y)
-{
-	if (!is_collided(x, y) && x < WIDTH)
-		player.moveRight();
-}
-
-void Engine::movePlayerLeft(unsigned int x, unsigned int y)
-{
-	if (!is_collided(x, y) && x >= 0)
-		player.moveLeft();
-}
-
-void Engine::movePlayerUp(unsigned int x, unsigned int y)
-{
-	if (!is_collided(x, y) && y < HEIGHT)
-		player.moveUp();
-}
-
-void Engine::movePlayerDown(unsigned int x, unsigned int y)
-{
-	if (!is_collided(x, y) && y >= 0)
-=======
 void Engine::movePlayerLeft()
 {
 	if (!is_collided(player.get_coordinates()->getX() - 1, player.get_coordinates()->getY()) &&
@@ -191,6 +139,5 @@ void Engine::movePlayerDown()
 {
 	if (!is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() + 1) &&
 		player.get_coordinates()->getY() < HEIGHT)
->>>>>>> Stashed changes
 		player.moveDown();
 }

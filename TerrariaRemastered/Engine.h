@@ -6,7 +6,7 @@
 #define PLAYER_DOWN 'A'
 #define BLOCK_SYM 'O'
 #define WALL_SYM '#'
-//Нужны для перемещения курсора
+//ГЌГіГ¦Г­Г» Г¤Г«Гї ГЇГҐГ°ГҐГ¬ГҐГ№ГҐГ­ГЁГї ГЄГіГ°Г±Г®Г°Г 
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #define BACKGROUND 255, 255, 255
@@ -29,6 +29,8 @@ class Engine
 	Player player{ WIDTH / 2, HEIGHT / 2 };
 	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT), "TerrariaRemastered" };
 
+	char current_frame[HEIGHT][WIDTH];
+
 	void init_map();
 	void update_frame();
 	void control_enter();
@@ -37,16 +39,9 @@ public:
 
 	bool is_collided(unsigned int x, unsigned int y);
 
-<<<<<<< Updated upstream
-	void movePlayerRight(unsigned int x, unsigned int y);
-	void movePlayerLeft(unsigned int x, unsigned int y);
-	void movePlayerUp(unsigned int x, unsigned int y);
-	void movePlayerDown(unsigned int x, unsigned int y);
-=======
 	void movePlayerRight();
 	void movePlayerLeft();
 	void movePlayerUp();
 	void movePlayerDown();
->>>>>>> Stashed changes
 };
 
