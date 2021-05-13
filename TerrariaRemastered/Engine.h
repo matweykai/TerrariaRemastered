@@ -6,7 +6,7 @@
 #define PLAYER_DOWN 'A'
 #define BLOCK_SYM 'O'
 #define WALL_SYM '#'
-//Нужны для перемещения курсора
+//ГЌГіГ¦Г­Г» Г¤Г«Гї ГЇГҐГ°ГҐГ¬ГҐГ№ГҐГ­ГЁГї ГЄГіГ°Г±Г®Г°Г 
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #define BACKGROUND 255, 255, 255
@@ -36,5 +36,12 @@ class Engine
 	void control_enter();
 public:
 	void start_game();
+
+	bool is_collided(unsigned int x, unsigned int y);
+
+	void movePlayerRight();
+	void movePlayerLeft();
+	void movePlayerUp();
+	void movePlayerDown();
 };
 
