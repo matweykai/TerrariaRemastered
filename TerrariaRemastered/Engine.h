@@ -1,17 +1,12 @@
 #pragma once
 #define WIDTH 10
 #define HEIGHT 10
-#define WIDTH 10
-#define PLAYER_UPPER '0'
-#define PLAYER_DOWN 'A'
-#define BLOCK_SYM 'O'
-#define WALL_SYM '#'
 //Íóæíû äëÿ ïåðåìåùåíèÿ êóðñîðà
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
-#define BACKGROUND 255, 255, 255
-#define BLOCKWIDTH 50
-#define BLOCKHEIGHT 50
+#define BACKGROUND 1, 161, 255
+#define BLOCKWIDTH 40
+#define BLOCKHEIGHT 40
 
 #include "Block.h"
 #include "Player.h"

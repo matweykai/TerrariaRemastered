@@ -3,7 +3,7 @@
 void Engine::update_frame() 
 {
 	gameWindow.clear(Color(BACKGROUND));
-	//Ðèñóåì áëîêè
+	//Blocks
 	RectangleShape* rectangles = new RectangleShape[blocks.size()];
 
 	for (int i = 0; i < blocks.size(); i++)
@@ -16,7 +16,7 @@ void Engine::update_frame()
 		gameWindow.draw(rectangles[i]);
 	}
 
-	//Ðèñóåì ïåðñîíàæà
+	//Player
 	CircleShape head;
 	RectangleShape body;
 
@@ -30,7 +30,7 @@ void Engine::update_frame()
 
 	gameWindow.draw(head);
 	gameWindow.draw(body);
-	//Îòîáðàæàåì íà ýêðàíå
+	//Showing result
 	gameWindow.display();
 
 	delete[] rectangles;
@@ -51,6 +51,7 @@ void Engine::init_map()
 }
 void Engine::start_game() 
 {
+	
 	gameWindow.setVerticalSyncEnabled(true);
 
 	init_map();
@@ -76,19 +77,19 @@ void Engine::control_enter(Event ev)
 	{
 		switch (ev.key.code)
 		{
-		case Keyboard::Key::Down:
+		case Keyboard::Key::S:
 			movePlayerDown();
 			break;
 
-		case Keyboard::Key::Up:
+		case Keyboard::Key::Space:
 			movePlayerUp();
 			break;
 
-		case Keyboard::Key::Left:
+		case Keyboard::Key::A:
 			movePlayerLeft();
 			break;
 
-		case Keyboard::Key::Right:
+		case Keyboard::Key::D:
 			movePlayerRight();
 			break;
 		}
@@ -119,13 +120,13 @@ void Engine::movePlayerLeft()
 void Engine::movePlayerUp()
 {
 	if (!is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() - 1) &&
-		player.get_coordinates()->getY() > 1)
+		player.get_coordinates()->getY() > 1 && !is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() - 2))
 		player.moveUp();
 }
 
 void Engine::movePlayerDown()
 {
 	if (!is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() + 1) &&
-		player.get_coordinates()->getY() < HEIGHT)
+		player.get_coordinates()->getY() + 1 < HEIGHT)
 		player.moveDown();
 }
