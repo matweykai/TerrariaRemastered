@@ -9,6 +9,7 @@ class Block : Item
 {
 	Coordinates coordinates;
 	Color color;
+
 public:
 	Block(unsigned int x, unsigned int y, Color color);
 	Coordinates* get_coordinates();
