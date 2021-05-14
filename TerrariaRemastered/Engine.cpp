@@ -55,10 +55,6 @@ void Engine::start_game()
 
 	init_map();
 
-	control_enter();
-
-	int counter = 0;	//FOR TESTING
-
 	while (gameWindow.isOpen())
 	{
 		Event ev;
@@ -66,43 +62,35 @@ void Engine::start_game()
 		{
 			if (ev.type == Event::Closed)
 				gameWindow.close();
+			if (ev.type == Event::KeyPressed)
+				control_enter(ev);
 		}
 
 		update_frame();
-
-		Sleep(500);
 	}
 }
 
-void Engine::control_enter()
+void Engine::control_enter(Event ev)
 {
-	while (gameWindow.isOpen()) 
+	if (ev.type == Event::KeyPressed)
 	{
-		Event ev;
-		while (gameWindow.pollEvent(ev))
+		switch (ev.key.code)
 		{
-			if (ev.type == Event::KeyPressed)
-			{
-				switch (ev.key.code)
-				{
-				case Keyboard::Key::Down:
-					movePlayerDown();
-					break;
+		case Keyboard::Key::Down:
+			movePlayerDown();
+			break;
 
-				case Keyboard::Key::Up:
-					movePlayerUp();
-					break;
+		case Keyboard::Key::Up:
+			movePlayerUp();
+			break;
 
-				case Keyboard::Key::Left:
-					movePlayerLeft();
-					break;
+		case Keyboard::Key::Left:
+			movePlayerLeft();
+			break;
 
-				case Keyboard::Key::Right:
-					movePlayerRight();
-					break;
-				}
-				Sleep(500);
-			}
+		case Keyboard::Key::Right:
+			movePlayerRight();
+			break;
 		}
 	}
 }
@@ -124,14 +112,14 @@ void Engine::movePlayerRight()
 void Engine::movePlayerLeft()
 {
 	if (!is_collided(player.get_coordinates()->getX() - 1, player.get_coordinates()->getY()) &&
-		player.get_coordinates()->getX() >= 0)
+		player.get_coordinates()->getX() > 0)
 		player.moveLeft();
 }
 
 void Engine::movePlayerUp()
 {
 	if (!is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() - 1) &&
-		player.get_coordinates()->getY() >= 0)
+		player.get_coordinates()->getY() > 1)
 		player.moveUp();
 }
 

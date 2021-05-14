@@ -33,7 +33,7 @@ class Engine
 
 	void init_map();
 	void update_frame();
-	void control_enter();
+	void control_enter(Event ev);
 public:
 	void start_game();
 
