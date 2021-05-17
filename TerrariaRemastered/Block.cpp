@@ -4,12 +4,12 @@ Coordinates* Block::get_coordinates()
 {
 	return &coordinates;
 }
-Color Block::get_color() 
+Texture* Block::get_texture() 
 {
-	return color;
+	return texture;
 }
-Block::Block(unsigned int x, unsigned int y, Color color)
+Block::Block(unsigned int x, unsigned int y, Texture* texture)
 {
 	this->coordinates = Coordinates(x, y);
-	this->color = color;
+	this->texture = texture;
 }

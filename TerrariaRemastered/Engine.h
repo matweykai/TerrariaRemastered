@@ -14,29 +14,36 @@
 #include <windows.h>
 #include <iostream>
 #include <algorithm>
+#include <thread>
+#include <mutex>
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
+using namespace std;
 
 class Engine
 {
 	vector<Block> blocks;
+	vector<Texture> textures;
 	Player player{ WIDTH / 2, HEIGHT / 2 };
 	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT), "TerrariaRemastered" };
+	bool closing = false;
 
-	char current_frame[HEIGHT][WIDTH];
+	mutex mut;
 
 	void init_map();
 	void update_frame();
 	void control_enter(Event ev);
-public:
-	void start_game();
-
-	bool is_collided(unsigned int x, unsigned int y);
+	void get_textures();
 
 	void movePlayerRight();
 	void movePlayerLeft();
 	void movePlayerUp();
 	void movePlayerDown();
+
+	void falling();
+	bool is_collided(unsigned int x, unsigned int y);
+public:
+	void start_game();
 };
 

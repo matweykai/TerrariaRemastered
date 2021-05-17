@@ -8,9 +8,9 @@ void Engine::update_frame()
 
 	for (int i = 0; i < blocks.size(); i++)
 	{
-		rectangles[i].setFillColor(blocks[i].get_color());
+		rectangles[i].setTexture(blocks[i].get_texture());
 		rectangles[i].setOutlineColor(Color(0, 0, 0));
-		rectangles[i].setOutlineThickness(1);
+		//rectangles[i].setOutlineThickness(1);
 		rectangles[i].setPosition(blocks[i].get_coordinates()->getX() * BLOCKWIDTH, blocks[i].get_coordinates()->getY() * BLOCKHEIGHT);
 		rectangles[i].setSize(Vector2f(BLOCKWIDTH, BLOCKHEIGHT));
 		gameWindow.draw(rectangles[i]);
@@ -42,20 +42,20 @@ void Engine::init_map()
 {
 	for (int i = 0; i < WIDTH; i++)
 	{
-		//Green blocks
-		blocks.push_back(Block(i, 5, Color::Green));
-		blocks.push_back(Block(i, 6, Color::Green));
-		//Brown blocks
-		blocks.push_back(Block(i, 7, Color(50, 30, 1)));	
-		blocks.push_back(Block(i, 8, Color(50, 30, 1)));
-		blocks.push_back(Block(i, 9, Color(50, 30, 1)));
+		//Dirt blocks
+		blocks.push_back(Block(i, 7, &textures[0]));
+		//Stone blocks
+		blocks.push_back(Block(i, 8, &textures[2]));
+		blocks.push_back(Block(i, 9, &textures[2]));
+		//Grass blocks
+		blocks.push_back(Block(i, 6, &textures[1]));
 	}
 }
 void Engine::start_game() 
 {
 	
 	gameWindow.setVerticalSyncEnabled(true);
-
+	get_textures();
 	init_map();
 
 	thread falling_thread(&Engine::falling, this);
@@ -75,6 +75,20 @@ void Engine::start_game()
 	closing = true;
 
 	falling_thread.join();
+}
+void Engine::get_textures() 
+{
+	Texture dirt;
+	dirt.loadFromFile("Dirt.png");
+	textures.push_back(dirt);
+
+	Texture grass;
+	grass.loadFromFile("Grass.png");
+	textures.push_back(grass);
+
+	Texture stone;
+	stone.loadFromFile("Stone.png");
+	textures.push_back(stone);
 }
 
 void Engine::control_enter(Event ev)
