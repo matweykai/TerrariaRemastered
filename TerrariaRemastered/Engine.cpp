@@ -17,21 +17,15 @@ void Engine::update_frame()
 	}
 
 	//Player
-	CircleShape head;
-	RectangleShape body;
+	RectangleShape s_player;
 
 	mut.lock();
-	head.setFillColor(Color::Yellow);
-	head.setPosition(player.get_coordinates()->getX() * BLOCKWIDTH, (player.get_coordinates()->getY() - 1) * BLOCKHEIGHT);
-	head.setRadius(BLOCKWIDTH / 2);
-
-	body.setFillColor(Color::Cyan);
-	body.setPosition(player.get_coordinates()->getX() * BLOCKWIDTH, player.get_coordinates()->getY() * BLOCKHEIGHT);
-	body.setSize(Vector2f(BLOCKWIDTH, BLOCKHEIGHT));
+	s_player.setSize(Vector2f(P_WIDTH * BLOCKWIDTH, P_HEIGHT * BLOCKHEIGHT));
+	s_player.setTexture(&textures[0]);
+	s_player.setPosition(player.get_coordinates()->getX() * BLOCKWIDTH, (player.get_coordinates()->getY() - 1) * BLOCKHEIGHT);
 	mut.unlock();
 
-	gameWindow.draw(head);
-	gameWindow.draw(body);
+	gameWindow.draw(s_player);
 	//Showing result
 	gameWindow.display();
 
@@ -43,12 +37,12 @@ void Engine::init_map()
 	for (int i = 0; i < WIDTH; i++)
 	{
 		//Dirt blocks
-		blocks.push_back(Block(i, 7, &textures[0]));
+		blocks.push_back(Block(i, 7, &textures[1]));
 		//Stone blocks
-		blocks.push_back(Block(i, 8, &textures[2]));
-		blocks.push_back(Block(i, 9, &textures[2]));
+		blocks.push_back(Block(i, 8, &textures[3]));
+		blocks.push_back(Block(i, 9, &textures[3]));
 		//Grass blocks
-		blocks.push_back(Block(i, 6, &textures[1]));
+		blocks.push_back(Block(i, 6, &textures[2]));
 	}
 }
 void Engine::start_game() 
@@ -78,6 +72,10 @@ void Engine::start_game()
 }
 void Engine::get_textures() 
 {
+	Texture player;
+	player.loadFromFile("Player.png");
+	textures.push_back(player);
+
 	Texture dirt;
 	dirt.loadFromFile("Dirt.png");
 	textures.push_back(dirt);
@@ -126,27 +124,59 @@ bool Engine::is_collided(unsigned int x, unsigned int y)
 }
 void Engine::movePlayerRight()
 {
-	if (!is_collided(player.get_coordinates()->getX() + 1, player.get_coordinates()->getY()) &&
-		player.get_coordinates()->getX() + 1 < WIDTH)
-		player.moveRight();
+	int temp_X = player.get_coordinates()->getX();
+	int temp_Y = player.get_coordinates()->getY();
+
+	if (temp_X + P_WIDTH + 1 > WIDTH)
+		return;
+
+	for(int i = 0; i < P_HEIGHT; i++)
+		if(is_collided(temp_X + P_WIDTH, temp_Y + i - 1))
+			return;
+	
+	player.moveRight();
 }
 void Engine::movePlayerLeft()
 {
-	if (!is_collided(player.get_coordinates()->getX() - 1, player.get_coordinates()->getY()) &&
-		player.get_coordinates()->getX() > 0)
-		player.moveLeft();
+	int temp_X = player.get_coordinates()->getX();
+	int temp_Y = player.get_coordinates()->getY();
+
+	if (temp_X - 1 < 0)
+		return;
+
+	for (int i = 0; i < P_HEIGHT; i++)
+		if (is_collided(temp_X - 1, temp_Y + i - 1))
+			return;
+
+	player.moveLeft();
 }
 void Engine::movePlayerUp()
 {
-	if (!is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() - 1) &&
-		player.get_coordinates()->getY() > 1 && !is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() - 2))
-		player.moveUp();
+	int temp_X = player.get_coordinates()->getX();
+	int temp_Y = player.get_coordinates()->getY();
+
+	if (temp_Y - 1 <= 0)
+		return;
+
+	for (int i = 0; i < P_WIDTH; i++)
+		if (is_collided(temp_X + i, temp_Y - 1))
+			return;
+
+	player.moveUp();
 }
 void Engine::movePlayerDown()
 {
-	if (!is_collided(player.get_coordinates()->getX(), player.get_coordinates()->getY() + 1) &&
-		player.get_coordinates()->getY() + 1 < HEIGHT)
-		player.moveDown();
+	int temp_X = player.get_coordinates()->getX();
+	int temp_Y = player.get_coordinates()->getY();
+
+	if (temp_Y + P_HEIGHT > HEIGHT)
+		return;
+
+	for (int i = 0; i < P_WIDTH; i++)
+		if (is_collided(temp_X + i, temp_Y + P_HEIGHT - 1))
+			return;
+
+	player.moveDown();
 }
 
 void Engine::falling() 

@@ -1,6 +1,8 @@
 #pragma once
 #define WIDTH 10
 #define HEIGHT 10
+#define P_HEIGHT 3
+#define P_WIDTH 2
 //Íóæíû äëÿ ïåðåìåùåíèÿ êóðñîðà
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
