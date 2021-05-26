@@ -8,11 +8,13 @@ using namespace sf;
 class Block : Item
 {
 	Coordinates coordinates;
-	Color color;
+	Texture* texture;
+
 public:
-	Block(unsigned int x, unsigned int y, Color color);
+	Block(unsigned int x, unsigned int y, Texture* texture);
 	Coordinates* get_coordinates();
-	Color get_color();
+	Texture* get_texture();
+
 };
 
 
