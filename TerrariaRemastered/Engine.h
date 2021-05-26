@@ -19,6 +19,7 @@
 #include <thread>
 #include <mutex>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 using namespace sf;
 using namespace std;
@@ -32,6 +33,8 @@ class Engine
 	bool closing = false;
 
 	mutex mut;
+
+	Music music;
 
 	void init_map();
 	void update_frame();

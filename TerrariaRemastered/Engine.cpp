@@ -1,4 +1,10 @@
 #include "Engine.h"
+void Engine::Music_On()
+{
+	music.openFromFile("MusicTerraria.ogg");
+	music.play();
+	music.setLoop(true);
+}
 
 void Engine::update_frame() 
 {
@@ -53,6 +59,9 @@ void Engine::start_game()
 	init_map();
 
 	thread falling_thread(&Engine::falling, this);
+  Music_On();
+
+
 
 	while (gameWindow.isOpen())
 	{
