@@ -1,10 +1,4 @@
 #include "Engine.h"
-void Engine::Music_On()
-{
-	music.openFromFile("MusicTerraria.ogg");
-	music.play();
-	music.setLoop(true);
-}
 
 void Engine::update_frame() 
 {
@@ -59,7 +53,7 @@ void Engine::start_game()
 	init_map();
 
 	thread falling_thread(&Engine::falling, this);
-  Music_On();
+	Music_On();
 
 
 
@@ -197,4 +191,10 @@ void Engine::falling()
 		mut.unlock();
 		this_thread::sleep_for(chrono::milliseconds(500));
 	}
+}
+void Engine::Music_On()
+{
+	music.openFromFile("8_Bit_Surf.ogg");
+	music.play();
+	music.setLoop(true);
 }

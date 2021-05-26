@@ -40,6 +40,7 @@ class Engine
 	void update_frame();
 	void control_enter(Event ev);
 	void get_textures();
+	void Music_On();
 
 	void movePlayerRight();
 	void movePlayerLeft();
