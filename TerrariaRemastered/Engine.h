@@ -20,6 +20,7 @@
 #include <iostream>
 #include <algorithm>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 using namespace sf;
 
@@ -30,6 +31,8 @@ class Engine
 	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT), "TerrariaRemastered" };
 
 	char current_frame[HEIGHT][WIDTH];
+
+	Music music;
 
 	void init_map();
 	void update_frame();

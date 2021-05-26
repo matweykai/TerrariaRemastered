@@ -57,6 +57,8 @@ void Engine::start_game()
 
 	int counter = 0;	//FOR TESTING
 
+
+
 	while (gameWindow.isOpen())
 	{
 		Event ev;
@@ -70,6 +72,14 @@ void Engine::start_game()
 
 		Sleep(500);
 	}
+}
+
+
+void Engine::Music_On()
+{
+	music.openFromFile("MusicTerraria.ogg");
+	music.play();
+	music.setLoop(true);
 }
 
 void Engine::control_enter()
