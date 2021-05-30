@@ -9,6 +9,7 @@
 #define BACKGROUND 1, 161, 255
 #define BLOCKWIDTH 40
 #define BLOCKHEIGHT 40
+#define RADIUS 3.5
 
 #include "Block.h"
 #include "Player.h"
@@ -20,6 +21,7 @@
 #include <mutex>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+//#include <SFML/Mouse.hpp>
 
 using namespace sf;
 using namespace std;
@@ -41,6 +43,9 @@ class Engine
 	void control_enter(Event ev);
 	void get_textures();
 	void Music_On();
+	Coordinates check_click(Vector2i mouse_coordinates);
+	void place_block(Coordinates coordinates, Block block);
+	bool is_in_range(Coordinates coordinates);
 
 	void movePlayerRight();
 	void movePlayerLeft();

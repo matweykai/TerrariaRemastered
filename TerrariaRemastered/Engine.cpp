@@ -55,8 +55,6 @@ void Engine::start_game()
 	thread falling_thread(&Engine::falling, this);
 	Music_On();
 
-
-
 	while (gameWindow.isOpen())
 	{
 		Event ev;
@@ -64,6 +62,8 @@ void Engine::start_game()
 		{
 			if (ev.type == Event::Closed)
 				gameWindow.close();
+			if (ev.type == ev.MouseButtonReleased && ev.mouseButton.button == Mouse::Right)
+				place_block(check_click(Mouse::getPosition(gameWindow)), Block(0, 0, &textures[2]));	//Should be changed when the inventory will be ready
 			if (ev.type == Event::KeyPressed)
 				control_enter(ev);
 		}
@@ -162,7 +162,7 @@ void Engine::movePlayerUp()
 		return;
 
 	for (int i = 0; i < P_WIDTH; i++)
-		if (is_collided(temp_X + i, temp_Y - 1))
+		if (is_collided(temp_X + i, temp_Y - 2))
 			return;
 
 	player.moveUp();
@@ -197,4 +197,40 @@ void Engine::Music_On()
 	music.openFromFile("8_Bit_Surf.ogg");
 	music.play();
 	music.setLoop(true);
+}
+Coordinates Engine::check_click(Vector2i mouse_coordinates) 
+{
+	return Coordinates(mouse_coordinates.x / BLOCKWIDTH, mouse_coordinates.y / BLOCKHEIGHT);
+}
+void Engine::place_block(Coordinates coordinates, Block block) 
+{
+	int X_0 = player.get_coordinates()->getX();
+	int Y_0 = player.get_coordinates()->getY();
+	int X = coordinates.getX();
+	int Y = coordinates.getY();
+
+	if (!is_in_range(coordinates) || (X >= X_0 && X <= X_0 + P_WIDTH - 1 && Y >= Y_0 - 1 && Y < Y_0 + P_HEIGHT - 1))
+		return;
+
+	vector<Block>::iterator found = find_if(blocks.begin(), blocks.end(), 
+		[&coordinates](Block temp) 
+		{ 
+			return temp.get_coordinates()->getX() == coordinates.getX()
+				&& temp.get_coordinates()->getY() == coordinates.getY(); 
+		});
+	
+	if (found != blocks.end())
+		return;
+
+	block.get_coordinates()->setX(coordinates.getX());
+	block.get_coordinates()->setY(coordinates.getY());
+
+	blocks.push_back(block);
+}
+bool Engine::is_in_range(Coordinates coordinates)
+{
+	double x_0 = (double)player.get_coordinates()->getX() + (P_WIDTH - 1) / 2.;
+	double y_0 = (double)player.get_coordinates()->getY() + (P_HEIGHT - 3) / 2.;
+
+	return sqrt(pow(coordinates.getX() - x_0, 2) + pow(coordinates.getY() - y_0, 2)) <= RADIUS;
 }
