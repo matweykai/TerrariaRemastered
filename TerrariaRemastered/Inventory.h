@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#define MAX_SIZE 10
+#define INVENTORY_SIZE 10
 
 class Inventory
 {
@@ -15,4 +15,5 @@ public:
 	void config();
 	Item* get_item(int index);
 	void put_item(Item* item);
+	vector<pair<int, Item*>> get_inventory();
 };
