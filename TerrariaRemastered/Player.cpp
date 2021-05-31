@@ -3,6 +3,7 @@
 Player::Player(unsigned int x, unsigned int y) 
 {
 	this->coordinates = Coordinates(x, y);
+	inventory.config();
 }
 Coordinates* Player::get_coordinates() 
 {
@@ -23,4 +24,8 @@ void Player::moveUp()
 void Player::moveDown()
 {
 	coordinates.setY(coordinates.getY() + 1);
+}
+Inventory& Player::get_inventory() 
+{
+	return inventory;
 }
