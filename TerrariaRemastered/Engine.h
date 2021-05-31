@@ -1,15 +1,7 @@
 #pragma once
-#define WIDTH 10
-#define HEIGHT 10
-#define P_HEIGHT 3
-#define P_WIDTH 2
-//Íóæíû äëÿ ïåðåìåùåíèÿ êóðñîðà
+
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
-#define BACKGROUND 1, 161, 255
-#define BLOCKWIDTH 40
-#define BLOCKHEIGHT 40
-#define RADIUS 3.5
 
 #include "Block.h"
 #include "Player.h"
@@ -21,17 +13,33 @@
 #include <mutex>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-//#include <SFML/Mouse.hpp>
+
+#define WIDTH 30
+#define HEIGHT 10
+#define P_HEIGHT 3
+#define P_WIDTH 2
+#define BACKGROUND 1, 161, 255
+#define BLOCKWIDTH 40
+#define BLOCKHEIGHT 40
+#define INVENTORY_WIDTH 2 * BLOCKWIDTH
+#define INVENTORY_HEIGHT 2 * BLOCKHEIGHT
+#define RADIUS 3.5
 
 using namespace sf;
 using namespace std;
+
+enum TexturesID
+{
+	Player_texture = 0,
+	Inventory_cell
+};
 
 class Engine
 {
 	vector<Block> blocks;
 	vector<Texture> textures;
 	Player player{ WIDTH / 2, HEIGHT / 2 };
-	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT), "TerrariaRemastered" };
+	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT + INVENTORY_HEIGHT), "TerrariaRemastered" };
 	bool closing = false;
 
 	mutex mut;
@@ -43,7 +51,7 @@ class Engine
 	void control_enter(Event ev);
 	void get_textures();
 	void Music_On();
-	Coordinates check_click(Vector2i mouse_coordinates);
+	Coordinates* check_click(Vector2i mouse_coordinates);
 	void place_block(Coordinates coordinates, Block block);
 	bool is_in_range(Coordinates coordinates);
 

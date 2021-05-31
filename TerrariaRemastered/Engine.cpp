@@ -4,14 +4,14 @@ void Engine::update_frame()
 {
 	gameWindow.clear(Color(BACKGROUND));
 	//Blocks
-	RectangleShape* rectangles = new RectangleShape[blocks.size()];
+	RectangleShape* rectangles = new RectangleShape[blocks.size()];	
 
 	for (int i = 0; i < blocks.size(); i++)
 	{
 		rectangles[i].setTexture(blocks[i].get_texture());
 		rectangles[i].setOutlineColor(Color(0, 0, 0));
 		//rectangles[i].setOutlineThickness(1);
-		rectangles[i].setPosition(blocks[i].get_coordinates()->getX() * BLOCKWIDTH, blocks[i].get_coordinates()->getY() * BLOCKHEIGHT);
+		rectangles[i].setPosition(blocks[i].get_coordinates()->getX() * BLOCKWIDTH, blocks[i].get_coordinates()->getY() * BLOCKHEIGHT + INVENTORY_HEIGHT);
 		rectangles[i].setSize(Vector2f(BLOCKWIDTH, BLOCKHEIGHT));
 		gameWindow.draw(rectangles[i]);
 	}
@@ -21,11 +21,36 @@ void Engine::update_frame()
 
 	mut.lock();
 	s_player.setSize(Vector2f(P_WIDTH * BLOCKWIDTH, P_HEIGHT * BLOCKHEIGHT));
-	s_player.setTexture(&textures[0]);
-	s_player.setPosition(player.get_coordinates()->getX() * BLOCKWIDTH, (player.get_coordinates()->getY() - 1) * BLOCKHEIGHT);
+	s_player.setTexture(&textures[TexturesID::Player_texture]);
+	s_player.setPosition(player.get_coordinates()->getX() * BLOCKWIDTH, (player.get_coordinates()->getY() - 1) * BLOCKHEIGHT + INVENTORY_HEIGHT);
 	mut.unlock();
 
 	gameWindow.draw(s_player);
+
+	//Inventory
+	RectangleShape inventory_cells[INVENTORY_SIZE];
+	//We get temp inventory, only for drawing
+	vector<pair<int, Item*>> temp_inventory = player.get_inventory().get_inventory();
+	for (int i = 0; i < INVENTORY_SIZE; i++)
+	{
+		inventory_cells[i].setSize(Vector2f(INVENTORY_WIDTH, INVENTORY_HEIGHT));
+		inventory_cells[i].setTexture(&textures[TexturesID::Inventory_cell]);
+		inventory_cells[i].setPosition(INVENTORY_HEIGHT * i, 0);
+		gameWindow.draw(inventory_cells[i]);
+		
+		if (temp_inventory[i].second != nullptr)
+		{
+			RectangleShape item_icon;
+			item_icon.setSize(Vector2f(BLOCKWIDTH, BLOCKHEIGHT));
+			//We set item origin as the left corner of rectangle
+			item_icon.setOrigin(inventory_cells[i].getPosition());
+			item_icon.setPosition(INVENTORY_WIDTH / 2 - BLOCKWIDTH / 2, INVENTORY_HEIGHT / 2 - BLOCKHEIGHT / 2);
+			item_icon.setTexture(temp_inventory[i].second->get_texture());
+
+			gameWindow.draw(item_icon);
+		}
+	}
+
 	//Showing result
 	gameWindow.display();
 
@@ -37,12 +62,12 @@ void Engine::init_map()
 	for (int i = 0; i < WIDTH; i++)
 	{
 		//Dirt blocks
-		blocks.push_back(Block(i, 7, &textures[1]));
+		blocks.push_back(Block(i, 7, "Dirt", &textures[BlockTextures::Dirt]));
 		//Stone blocks
-		blocks.push_back(Block(i, 8, &textures[3]));
-		blocks.push_back(Block(i, 9, &textures[3]));
+		blocks.push_back(Block(i, 8, "Stone", &textures[BlockTextures::Stone]));
+		blocks.push_back(Block(i, 9, "Stone", &textures[BlockTextures::Stone]));
 		//Grass blocks
-		blocks.push_back(Block(i, 6, &textures[2]));
+		blocks.push_back(Block(i, 6, "Grass", &textures[BlockTextures::Grass]));
 	}
 }
 void Engine::start_game() 
@@ -55,6 +80,11 @@ void Engine::start_game()
 	thread falling_thread(&Engine::falling, this);
 	Music_On();
 
+	//Only for testing
+	Block test_block(0, 0, "Grass", &textures[BlockTextures::Grass]);
+	for (int i = 0; i < 10; i++)
+		player.get_inventory().put_item(new Block(test_block));
+
 	while (gameWindow.isOpen())
 	{
 		Event ev;
@@ -63,7 +93,14 @@ void Engine::start_game()
 			if (ev.type == Event::Closed)
 				gameWindow.close();
 			if (ev.type == ev.MouseButtonReleased && ev.mouseButton.button == Mouse::Right)
-				place_block(check_click(Mouse::getPosition(gameWindow)), Block(0, 0, &textures[2]));	//Should be changed when the inventory will be ready
+			{
+				Coordinates* clicked_block = check_click(Mouse::getPosition(gameWindow));
+				if (clicked_block != nullptr)
+				{
+					place_block(*clicked_block, Block(0, 0, "Grass", &textures[BlockTextures::Grass]));	//Should be changed when the inventory will be ready
+					delete clicked_block;
+				}
+			}
 			if (ev.type == Event::KeyPressed)
 				control_enter(ev);
 		}
@@ -75,21 +112,27 @@ void Engine::start_game()
 }
 void Engine::get_textures() 
 {
+	textures.resize(BlockTextures::Stone + 1);
+
 	Texture player;
 	player.loadFromFile("Player.png");
-	textures.push_back(player);
+	textures[TexturesID::Player_texture] = player;
+
+	Texture inv_cell;
+	inv_cell.loadFromFile("Inventory_cell.png");
+	textures[TexturesID::Inventory_cell] = inv_cell;
 
 	Texture dirt;
 	dirt.loadFromFile("Dirt.png");
-	textures.push_back(dirt);
+	textures[BlockTextures::Dirt] = dirt;
 
 	Texture grass;
 	grass.loadFromFile("Grass.png");
-	textures.push_back(grass);
+	textures[BlockTextures::Grass] = grass;
 
 	Texture stone;
 	stone.loadFromFile("Stone.png");
-	textures.push_back(stone);
+	textures[BlockTextures::Stone] = stone;
 }
 
 void Engine::control_enter(Event ev)
@@ -198,9 +241,11 @@ void Engine::Music_On()
 	music.play();
 	music.setLoop(true);
 }
-Coordinates Engine::check_click(Vector2i mouse_coordinates) 
+Coordinates* Engine::check_click(Vector2i mouse_coordinates) 
 {
-	return Coordinates(mouse_coordinates.x / BLOCKWIDTH, mouse_coordinates.y / BLOCKHEIGHT);
+	if (mouse_coordinates.y <= INVENTORY_HEIGHT)
+		return nullptr;
+	return new Coordinates(mouse_coordinates.x / BLOCKWIDTH, (mouse_coordinates.y - INVENTORY_HEIGHT) / BLOCKHEIGHT);
 }
 void Engine::place_block(Coordinates coordinates, Block block) 
 {

@@ -6,7 +6,7 @@ using namespace sf;
 
 enum BlockTextures 
 {
-	Dirt = 1,
+	Dirt = 2,
 	Grass,
 	Stone
 };
