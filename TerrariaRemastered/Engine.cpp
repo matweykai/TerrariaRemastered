@@ -43,7 +43,7 @@ void Engine::update_frame()
 			RectangleShape selected_item;
 			selected_item.setSize(Vector2f(INVENTORY_WIDTH, INVENTORY_HEIGHT));
 			selected_item.setTexture(&textures[TexturesID::Selected_item]);
-			selected_item.setPosition(INVENTORY_HEIGHT * i, 0);
+			selected_item.setPosition(INVENTORY_WIDTH * i, 0);
 
 			gameWindow.draw(selected_item);
 		}
@@ -53,14 +53,11 @@ void Engine::update_frame()
 		{
 			RectangleShape item_icon;
 			item_icon.setSize(Vector2f(BLOCKWIDTH, BLOCKHEIGHT));
-			//We set item origin as the left corner of rectangle
-			item_icon.setOrigin(inventory_cells[i].getPosition());
-			item_icon.setPosition(INVENTORY_WIDTH / 2 - BLOCKWIDTH / 2, INVENTORY_HEIGHT / 2 - BLOCKHEIGHT / 2);
 			item_icon.setTexture(temp_inventory[i].second->get_texture());
+			item_icon.setPosition(INVENTORY_WIDTH / 2 - BLOCKWIDTH / 2 + INVENTORY_WIDTH * i, INVENTORY_HEIGHT / 2 - BLOCKHEIGHT / 2);
 
 			Text count_label(to_string(temp_inventory[i].first), mainFont, 15);
-			count_label.setOrigin(inventory_cells[i].getPosition());
-			count_label.setPosition(INVENTORY_WIDTH / 2 - BLOCKWIDTH / 2, INVENTORY_HEIGHT / 2);
+			count_label.setPosition(INVENTORY_WIDTH / 2 - BLOCKWIDTH / 2 + INVENTORY_WIDTH * i, INVENTORY_HEIGHT / 2);
 			count_label.setFillColor(Color::White);
 
 			gameWindow.draw(item_icon);
@@ -99,8 +96,12 @@ void Engine::start_game()
 
 	//Only for testing
 	Block test_block(0, 0, "Grass", &textures[BlockTextures::Grass]);
+	Block test_block2(0, 0, "Stone", &textures[BlockTextures::Stone]);
 	for (int i = 0; i < 10; i++)
+	{
 		player.get_inventory().put_item(new Block(test_block));
+		player.get_inventory().put_item(new Block(test_block2));
+	}
 
 	while (gameWindow.isOpen())
 	{
