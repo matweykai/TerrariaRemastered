@@ -4,13 +4,6 @@
 
 using namespace sf;
 
-enum BlockTextures 
-{
-	Dirt = 2,
-	Grass,
-	Stone
-};
-
 class Block : public Item
 {
 	Coordinates coordinates;
