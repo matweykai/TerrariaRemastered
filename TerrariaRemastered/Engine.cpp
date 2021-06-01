@@ -37,7 +37,18 @@ void Engine::update_frame()
 		inventory_cells[i].setTexture(&textures[TexturesID::Inventory_cell]);
 		inventory_cells[i].setPosition(INVENTORY_HEIGHT * i, 0);
 		gameWindow.draw(inventory_cells[i]);
-		
+
+		if (i == inventory_index)
+		{
+			RectangleShape selected_item;
+			selected_item.setSize(Vector2f(INVENTORY_WIDTH, INVENTORY_HEIGHT));
+			selected_item.setTexture(&textures[TexturesID::Selected_item]);
+			selected_item.setPosition(INVENTORY_HEIGHT * i, 0);
+
+			gameWindow.draw(selected_item);
+		}
+
+		//Draw item icon
 		if (temp_inventory[i].second != nullptr)
 		{
 			RectangleShape item_icon;
@@ -47,7 +58,13 @@ void Engine::update_frame()
 			item_icon.setPosition(INVENTORY_WIDTH / 2 - BLOCKWIDTH / 2, INVENTORY_HEIGHT / 2 - BLOCKHEIGHT / 2);
 			item_icon.setTexture(temp_inventory[i].second->get_texture());
 
+			Text count_label(to_string(temp_inventory[i].first), mainFont, 15);
+			count_label.setOrigin(inventory_cells[i].getPosition());
+			count_label.setPosition(INVENTORY_WIDTH / 2 - BLOCKWIDTH / 2, INVENTORY_HEIGHT / 2);
+			count_label.setFillColor(Color::White);
+
 			gameWindow.draw(item_icon);
+			gameWindow.draw(count_label);
 		}
 	}
 
@@ -72,10 +89,10 @@ void Engine::init_map()
 }
 void Engine::start_game() 
 {
-	
 	gameWindow.setVerticalSyncEnabled(true);
 	get_textures();
 	init_map();
+	mainFont.loadFromFile("C:/WINDOWS/Fonts/arial.ttf");
 
 	thread falling_thread(&Engine::falling, this);
 	Music_On();
@@ -97,12 +114,28 @@ void Engine::start_game()
 				Coordinates* clicked_block = check_click(Mouse::getPosition(gameWindow));
 				if (clicked_block != nullptr)
 				{
-					place_block(*clicked_block, Block(0, 0, "Grass", &textures[BlockTextures::Grass]));	//Should be changed when the inventory will be ready
+					Block* temp_block = dynamic_cast<Block*>(player.get_inventory().get_inventory()[inventory_index].second);
+					if (temp_block != nullptr)
+						if(place_block(*clicked_block, *temp_block))
+							delete player.get_inventory().get_item(inventory_index);	//Here inventory returns new object, we don't need it, so we delete it immediately
+					
 					delete clicked_block;
 				}
 			}
 			if (ev.type == Event::KeyPressed)
 				control_enter(ev);
+			if (ev.type == Event::MouseWheelScrolled)
+			{
+				if (ev.mouseWheelScroll.delta > 0)
+					inventory_index--;
+				else if (ev.mouseWheelScroll.delta < 0)
+					inventory_index++;
+
+				if (inventory_index == INVENTORY_SIZE)
+					inventory_index = 0;
+				else if (inventory_index < 0)
+					inventory_index = INVENTORY_SIZE - 1;
+			}
 		}
 		update_frame();
 	}
@@ -121,6 +154,10 @@ void Engine::get_textures()
 	Texture inv_cell;
 	inv_cell.loadFromFile("Inventory_cell.png");
 	textures[TexturesID::Inventory_cell] = inv_cell;
+
+	Texture selected_item;
+	selected_item.loadFromFile("SelectedItem.png");
+	textures[TexturesID::Selected_item] = selected_item;
 
 	Texture dirt;
 	dirt.loadFromFile("Dirt.png");
@@ -247,7 +284,7 @@ Coordinates* Engine::check_click(Vector2i mouse_coordinates)
 		return nullptr;
 	return new Coordinates(mouse_coordinates.x / BLOCKWIDTH, (mouse_coordinates.y - INVENTORY_HEIGHT) / BLOCKHEIGHT);
 }
-void Engine::place_block(Coordinates coordinates, Block block) 
+bool Engine::place_block(Coordinates coordinates, Block block) 
 {
 	int X_0 = player.get_coordinates()->getX();
 	int Y_0 = player.get_coordinates()->getY();
@@ -255,7 +292,7 @@ void Engine::place_block(Coordinates coordinates, Block block)
 	int Y = coordinates.getY();
 
 	if (!is_in_range(coordinates) || (X >= X_0 && X <= X_0 + P_WIDTH - 1 && Y >= Y_0 - 1 && Y < Y_0 + P_HEIGHT - 1))
-		return;
+		return false;
 
 	vector<Block>::iterator found = find_if(blocks.begin(), blocks.end(), 
 		[&coordinates](Block temp) 
@@ -265,12 +302,14 @@ void Engine::place_block(Coordinates coordinates, Block block)
 		});
 	
 	if (found != blocks.end())
-		return;
+		return false;
 
 	block.get_coordinates()->setX(coordinates.getX());
 	block.get_coordinates()->setY(coordinates.getY());
 
 	blocks.push_back(block);
+
+	return true;
 }
 bool Engine::is_in_range(Coordinates coordinates)
 {

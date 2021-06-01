@@ -31,7 +31,15 @@ using namespace std;
 enum TexturesID
 {
 	Player_texture = 0,
-	Inventory_cell
+	Inventory_cell,
+	Selected_item
+};
+
+enum BlockTextures
+{
+	Dirt = TexturesID::Selected_item + 1,
+	Grass,
+	Stone
 };
 
 class Engine
@@ -41,6 +49,8 @@ class Engine
 	Player player{ WIDTH / 2, HEIGHT / 2 };
 	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT + INVENTORY_HEIGHT), "TerrariaRemastered" };
 	bool closing = false;
+	Font mainFont;
+	int inventory_index = 0;	//Index of selected cell in inventory
 
 	mutex mut;
 
@@ -52,7 +62,7 @@ class Engine
 	void get_textures();
 	void Music_On();
 	Coordinates* check_click(Vector2i mouse_coordinates);
-	void place_block(Coordinates coordinates, Block block);
+	bool place_block(Coordinates coordinates, Block block);	//True if block was placed
 	bool is_in_range(Coordinates coordinates);
 
 	void movePlayerRight();
