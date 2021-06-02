@@ -126,6 +126,16 @@ void Engine::start_game()
 					delete clicked_block;
 				}
 			}
+			if (ev.type == ev.MouseButtonReleased && ev.mouseButton.button == Mouse::Left)
+			{
+				Coordinates* clicked_block = check_click(Mouse::getPosition(gameWindow));
+				if (clicked_block != nullptr)
+				{
+					break_block(*clicked_block);
+
+					delete clicked_block;
+				}
+			}
 			if (ev.type == Event::KeyPressed)
 				control_enter(ev);
 			if (ev.type == Event::MouseWheelScrolled)
@@ -433,4 +443,28 @@ bool is_end(ifstream* stream)
 	stream->seekg(base);
 
 	return result;
+}
+void Engine::break_block(Coordinates coordinates)
+{
+	int X_0 = player.get_coordinates()->getX();
+	int Y_0 = player.get_coordinates()->getY();
+	int X = coordinates.getX();
+	int Y = coordinates.getY();
+
+	if (!is_in_range(coordinates))
+		return;
+
+	vector<Block>::iterator found = find_if(blocks.begin(), blocks.end(),
+		[&coordinates](Block temp)
+		{
+			return temp.get_coordinates()->getX() == coordinates.getX()
+				&& temp.get_coordinates()->getY() == coordinates.getY();
+		});
+
+	if (found == blocks.end())
+		return;
+
+	player.get_inventory().put_item(new Block(*found));
+
+	blocks.erase(found);
 }

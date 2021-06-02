@@ -67,6 +67,7 @@ class Engine
 	Coordinates* check_click(Vector2i mouse_coordinates);
 	bool place_block(Coordinates coordinates, Block block);	//True if block was placed
 	bool is_in_range(Coordinates coordinates);
+	void break_block(Coordinates coordinates);
 
 	void dump_map(string fileName);
 	bool download_map(string fileName);
