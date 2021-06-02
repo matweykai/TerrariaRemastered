@@ -8,14 +8,16 @@
 #include <vector>
 #include <windows.h>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <thread>
 #include <mutex>
+#include <stdlib.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-#define WIDTH 30
-#define HEIGHT 10
+#define WIDTH 50
+#define HEIGHT 20
 #define P_HEIGHT 3
 #define P_WIDTH 2
 #define BACKGROUND 1, 161, 255
@@ -24,6 +26,7 @@
 #define INVENTORY_WIDTH 2 * BLOCKWIDTH
 #define INVENTORY_HEIGHT 2 * BLOCKHEIGHT
 #define RADIUS 3.5
+#define MAPFILE "test.txt"
 
 using namespace sf;
 using namespace std;
@@ -46,7 +49,7 @@ class Engine
 {
 	vector<Block> blocks;
 	vector<Texture> textures;
-	Player player{ WIDTH / 2, HEIGHT / 2 };
+	Player player { WIDTH / 2, HEIGHT / 2 };
 	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT + INVENTORY_HEIGHT), "TerrariaRemastered" };
 	bool closing = false;
 	Font mainFont;
@@ -65,6 +68,9 @@ class Engine
 	bool place_block(Coordinates coordinates, Block block);	//True if block was placed
 	bool is_in_range(Coordinates coordinates);
 
+	void dump_map(string fileName);
+	bool download_map(string fileName);
+
 	void movePlayerRight();
 	void movePlayerLeft();
 	void movePlayerUp();
@@ -76,3 +82,4 @@ public:
 	void start_game();
 };
 
+bool is_end(ifstream* stream);

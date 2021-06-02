@@ -73,33 +73,36 @@ void Engine::update_frame()
 
 void Engine::init_map()
 {
-	for (int i = 0; i < WIDTH; i++)
+	if (!download_map(MAPFILE))
 	{
-		//Dirt blocks
-		blocks.push_back(Block(i, 7, "Dirt", &textures[BlockTextures::Dirt]));
-		//Stone blocks
-		blocks.push_back(Block(i, 8, "Stone", &textures[BlockTextures::Stone]));
-		blocks.push_back(Block(i, 9, "Stone", &textures[BlockTextures::Stone]));
-		//Grass blocks
-		blocks.push_back(Block(i, 6, "Grass", &textures[BlockTextures::Grass]));
+		for (int i = 0; i < WIDTH; i++)
+		{
+			//Dirt blocks
+			blocks.push_back(Block(i, HEIGHT - 3, "Dirt", &textures[BlockTextures::Dirt]));
+			//Stone blocks
+			blocks.push_back(Block(i, HEIGHT - 2, "Stone", &textures[BlockTextures::Stone]));
+			blocks.push_back(Block(i, HEIGHT - 1, "Stone", &textures[BlockTextures::Stone]));
+			//Grass blocks
+			blocks.push_back(Block(i, HEIGHT - 4, "Grass", &textures[BlockTextures::Grass]));
+		}
 	}
 }
 void Engine::start_game() 
 {
-	gameWindow.setVerticalSyncEnabled(true);
 	get_textures();
-	init_map();
 	mainFont.loadFromFile("C:/WINDOWS/Fonts/arial.ttf");
+
+	init_map();
 
 	thread falling_thread(&Engine::falling, this);
 	Music_On();
-
+	
 	//Only for testing
 	Block test_block(0, 0, "Grass", &textures[BlockTextures::Grass]);
 	Block test_block2(0, 0, "Stone", &textures[BlockTextures::Stone]);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 100; i++)
 	{
-		player.get_inventory().put_item(new Block(test_block));
+		//player.get_inventory().put_item(new Block(test_block));
 		player.get_inventory().put_item(new Block(test_block2));
 	}
 
@@ -143,6 +146,7 @@ void Engine::start_game()
 	closing = true;
 
 	falling_thread.join();
+	dump_map(MAPFILE);
 }
 void Engine::get_textures() 
 {
@@ -318,4 +322,115 @@ bool Engine::is_in_range(Coordinates coordinates)
 	double y_0 = (double)player.get_coordinates()->getY() + (P_HEIGHT - 3) / 2.;
 
 	return sqrt(pow(coordinates.getX() - x_0, 2) + pow(coordinates.getY() - y_0, 2)) <= RADIUS;
+}
+bool Engine::download_map(string fileName) 
+{
+	ifstream file;
+	file.open(fileName);
+
+	if (file.is_open())
+	{
+		unsigned int x_coord = 0, y_coord = 0;
+		
+		while (!is_end(&file))
+		{
+			string text_str;
+			getline(file, text_str);
+
+			int start_pos = 0, end_pos = 0;
+			while (true) 
+			{
+				if (text_str[end_pos] != ' ' && ++end_pos != text_str.length())
+					end_pos;
+				else
+				{
+					string temp_str = text_str.substr(start_pos, end_pos - start_pos);
+					int text_as_num = atoi(temp_str.c_str());
+					string block_name;
+
+					if (!text_as_num)
+						return false;
+
+					switch (text_as_num) 
+					{
+					case BlockTextures::Dirt:
+						block_name = "Dirt";
+						break;
+					case BlockTextures::Stone:
+						block_name = "Stone";
+						break;
+					case BlockTextures::Grass:
+						block_name = "Grass";
+						break;
+					}
+
+					if(block_name != "")
+						blocks.push_back(Block(x_coord, y_coord, block_name, &textures[text_as_num]));
+
+					x_coord++;
+					start_pos = ++end_pos;
+				}
+
+				if (end_pos > text_str.length())
+				{
+					y_coord++;
+					x_coord = 0;
+					break;
+				}
+			}
+		}
+		
+		file.close();
+
+		return true;
+	}
+
+	return false;
+}
+void Engine::dump_map(string fileName)
+{
+	ofstream file;
+
+	file.open(fileName);
+
+	if (file.is_open())
+	{
+		for (int i = 0; i < HEIGHT; i++)
+		{
+			for (int j = 0; j < WIDTH; j++)
+			{
+				vector<Block>::iterator iter = find_if(blocks.begin(), blocks.end(), [i, j](Block bl) { return bl.get_coordinates()->getX() == j && bl.get_coordinates()->getY() == i; });
+				if (iter == blocks.end())
+					file << 1;
+				else
+				{
+					string name = iter->get_name();
+
+					if (name == "Dirt")
+						file << BlockTextures::Dirt;
+					else if (name == "Stone")
+						file << BlockTextures::Stone;
+					else if (name == "Grass")
+						file << BlockTextures::Grass;
+
+					blocks.erase(iter);
+				}
+
+				file << " ";
+			}
+			file << endl;
+		}
+		file.close();
+	}
+}
+bool is_end(ifstream* stream)
+{
+	streampos base = stream->tellg();
+	stream->seekg(0, ios::end);
+	streampos end_pos = stream->tellg();
+	bool result = base == end_pos;
+	stream->clear();
+	stream->seekg(base);
+
+	return result;
 }
