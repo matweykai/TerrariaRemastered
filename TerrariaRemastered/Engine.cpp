@@ -21,7 +21,10 @@ void Engine::update_frame()
 
 	mut.lock();
 	s_player.setSize(Vector2f(P_WIDTH * BLOCKWIDTH, P_HEIGHT * BLOCKHEIGHT));
-	s_player.setTexture(&textures[TexturesID::Player_texture]);
+	if(moving_left)
+		s_player.setTexture(&textures[TexturesID::Left_Player_texture]);
+	else
+		s_player.setTexture(&textures[TexturesID::Player_texture]);
 	s_player.setPosition(player.get_coordinates()->getX() * BLOCKWIDTH, (player.get_coordinates()->getY() - 1) * BLOCKHEIGHT + INVENTORY_HEIGHT);
 	mut.unlock();
 
@@ -159,10 +162,16 @@ void Engine::get_textures()
 {
 	textures.resize(BlockTextures::Stone + 1);
 
+	//Player textures
 	Texture player;
 	player.loadFromFile("Player.png");
 	textures[TexturesID::Player_texture] = player;
 
+	Texture left_player;
+	left_player.loadFromFile("Player_Left.png");
+	textures[TexturesID::Left_Player_texture] = left_player;
+
+	//Inventory textures
 	Texture inv_cell;
 	inv_cell.loadFromFile("Inventory_cell.png");
 	textures[TexturesID::Inventory_cell] = inv_cell;
@@ -171,6 +180,7 @@ void Engine::get_textures()
 	selected_item.loadFromFile("SelectedItem.png");
 	textures[TexturesID::Selected_item] = selected_item;
 
+	//Blocks textures
 	Texture dirt;
 	dirt.loadFromFile("Dirt.png");
 	textures[BlockTextures::Dirt] = dirt;
@@ -183,6 +193,20 @@ void Engine::get_textures()
 	stone.loadFromFile("Stone.png");
 	textures[BlockTextures::Stone] = stone;
 
+	Texture leaves;
+	leaves.loadFromFile("Stone.png");
+	textures[BlockTextures::Leaves] = leaves;
+
+	Texture tree;
+	tree.loadFromFile("Stone.png");
+	textures[BlockTextures::Tree] = tree;
+
+	Texture metal;
+	metal.loadFromFile("Stone.png");
+	textures[BlockTextures::Metal] = metal;
+
+
+	//Tools textures
 	Texture pickaxe;
 	pickaxe.loadFromFile("Pickaxe.png");
 	textures[TexturesID::Tool_t] = pickaxe;
@@ -197,11 +221,16 @@ void Engine::control_enter(Event ev)
 			thread jump_thr(&Engine::jump, this);
 			jump_thr.detach();
 		}
-		else if(ev.key.code == Keyboard::Key::A)
+		else if (ev.key.code == Keyboard::Key::A)
+		{
 			movePlayerLeft();
-			
+			moving_left = true;
+		}
 		else if (ev.key.code == Keyboard::Key::D)
+		{
 			movePlayerRight();
+			moving_left = false;
+		}
 
 	}
 }

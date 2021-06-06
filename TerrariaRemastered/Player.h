@@ -9,6 +9,7 @@ class Player
 {
 	Inventory inventory;
 	Coordinates coordinates;
+	Texture* texture;
 
 public:
 	Player(unsigned int x = 5, unsigned int y = 5);

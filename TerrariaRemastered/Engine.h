@@ -38,7 +38,7 @@ using namespace std;
 enum TexturesID
 {
 	Player_texture = 0,
-	Left_texture,
+	Left_Player_texture,
 	Inventory_cell,
 	Selected_item,
 	Tool_t
@@ -49,7 +49,9 @@ enum BlockTextures
 	Dirt = TexturesID::Tool_t + 1,
 	Grass,
 	Stone,
-	Tree
+	Tree,
+	Leaves,
+	Metal
 };
 
 class Engine
@@ -64,6 +66,7 @@ class Engine
 
 	bool is_falling = false;
 	bool is_jumping = false;
+	bool moving_left = false;
 
 	mutex mut;
 
