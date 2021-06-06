@@ -29,6 +29,8 @@
 #define RADIUS 3.5
 #define MAPFILE "test.txt"
 #define INVFILE "inventory.txt"
+#define VERTICALTIME 100
+#define JUMPHEIGHT 4
 
 using namespace sf;
 using namespace std;
@@ -36,6 +38,7 @@ using namespace std;
 enum TexturesID
 {
 	Player_texture = 0,
+	Left_texture,
 	Inventory_cell,
 	Selected_item,
 	Tool_t
@@ -45,7 +48,8 @@ enum BlockTextures
 {
 	Dirt = TexturesID::Tool_t + 1,
 	Grass,
-	Stone
+	Stone,
+	Tree
 };
 
 class Engine
@@ -57,6 +61,9 @@ class Engine
 	bool closing = false;
 	Font mainFont;
 	int inventory_index = 0;	//Index of selected cell in inventory
+
+	bool is_falling = false;
+	bool is_jumping = false;
 
 	mutex mut;
 
@@ -76,6 +83,7 @@ class Engine
 	bool download_map(string fileName);
 	void dump_inventory(string fileName);
 	bool dowload_inventory(string fileName);
+	void jump();
 
 	void movePlayerRight();
 	void movePlayerLeft();

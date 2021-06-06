@@ -192,26 +192,17 @@ void Engine::control_enter(Event ev)
 {
 	if (ev.type == Event::KeyPressed)
 	{
-		mut.lock();
-		switch (ev.key.code)
+		if (ev.key.code == Keyboard::Key::Space)
 		{
-		case Keyboard::Key::S:
-			movePlayerDown();
-			break;
-
-		case Keyboard::Key::Space:
-			movePlayerUp();
-			break;
-
-		case Keyboard::Key::A:
-			movePlayerLeft();
-			break;
-
-		case Keyboard::Key::D:
-			movePlayerRight();
-			break;
+			thread jump_thr(&Engine::jump, this);
+			jump_thr.detach();
 		}
-		mut.unlock();
+		else if(ev.key.code == Keyboard::Key::A)
+			movePlayerLeft();
+			
+		else if (ev.key.code == Keyboard::Key::D)
+			movePlayerRight();
+
 	}
 }
 
@@ -255,13 +246,20 @@ void Engine::movePlayerUp()
 	int temp_Y = player.get_coordinates()->getY();
 
 	if (temp_Y - 1 <= 0)
+	{
+		is_jumping = false;
 		return;
+	}
 
 	for (int i = 0; i < P_WIDTH; i++)
 		if (is_collided(temp_X + i, temp_Y - 2))
+		{
+			is_jumping = false;
 			return;
+		}
 
 	player.moveUp();
+	is_jumping = true;
 }
 void Engine::movePlayerDown()
 {
@@ -269,24 +267,62 @@ void Engine::movePlayerDown()
 	int temp_Y = player.get_coordinates()->getY();
 
 	if (temp_Y + P_HEIGHT > HEIGHT)
+	{
+		is_falling = false;
 		return;
-
+	}
+		
 	for (int i = 0; i < P_WIDTH; i++)
 		if (is_collided(temp_X + i, temp_Y + P_HEIGHT - 1))
+		{
+			is_falling = false;
 			return;
+		}
 
 	player.moveDown();
+	is_falling = true;
 }
 
 void Engine::falling() 
 {
 	while (!closing)
 	{
-		mut.lock();
-		movePlayerDown();
-		mut.unlock();
-		this_thread::sleep_for(chrono::milliseconds(500));
+		if (!is_jumping)
+		{
+			mut.lock();
+			movePlayerDown();
+			mut.unlock();
+		}
+		this_thread::sleep_for(chrono::milliseconds(VERTICALTIME));
 	}
+}
+void Engine::jump() 
+{
+	mut.lock();
+
+	if (is_falling)
+	{
+		mut.unlock();
+		return;
+	}
+
+	is_jumping = true;
+	mut.unlock();
+
+	for (int i = 0; i < JUMPHEIGHT; i++)
+	{
+		if (!is_jumping)
+			return;
+		mut.lock();
+		movePlayerUp();
+		is_falling = true;
+		mut.unlock();
+		this_thread::sleep_for(chrono::milliseconds(VERTICALTIME));
+	}
+
+	mut.lock();
+	is_jumping = false;
+	mut.unlock();
 }
 void Engine::Music_On()
 {
