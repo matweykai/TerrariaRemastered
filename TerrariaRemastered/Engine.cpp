@@ -438,6 +438,15 @@ bool Engine::download_map(string fileName)
 					case BlockTextures::Grass:
 						block_name = "Grass";
 						break;
+					case BlockTextures::Leaves:
+						block_name = "Leaves";
+						break;
+					case BlockTextures::Metal:
+						block_name = "Metal";
+						break;
+					case BlockTextures::Tree:
+						block_name = "Tree";
+						break;
 					}
 
 					if(block_name != "")
@@ -488,6 +497,12 @@ void Engine::dump_map(string fileName)
 						file << BlockTextures::Stone;
 					else if (name == "Grass")
 						file << BlockTextures::Grass;
+					else if (name == "Metal")
+						file << BlockTextures::Metal;
+					else if (name == "Tree")
+						file << BlockTextures::Tree;
+					else if (name == "Leaves")
+						file << BlockTextures::Leaves;
 
 					blocks.erase(iter);
 				}
@@ -532,6 +547,18 @@ bool Engine::dowload_inventory(string fileName)
 			else if (name == "Stone")
 				for (int i = 0; i < count; i++)
 					player.get_inventory().put_item(new Block(0, 0, name, &textures[BlockTextures::Stone]));
+
+			else if (name == "Leaves")
+				for (int i = 0; i < count; i++)
+					player.get_inventory().put_item(new Block(0, 0, name, &textures[BlockTextures::Leaves]));
+
+			else if (name == "Metal")
+				for (int i = 0; i < count; i++)
+					player.get_inventory().put_item(new Block(0, 0, name, &textures[BlockTextures::Metal]));
+
+			else if (name == "Tree")
+				for (int i = 0; i < count; i++)
+					player.get_inventory().put_item(new Block(0, 0, name, &textures[BlockTextures::Tree]));
 
 			else if (name == "Pickaxe")
 				for (int i = 0; i < count; i++)

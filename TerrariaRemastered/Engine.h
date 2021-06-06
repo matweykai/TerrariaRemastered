@@ -27,7 +27,7 @@
 #define INVENTORY_WIDTH 2 * BLOCKWIDTH
 #define INVENTORY_HEIGHT 2 * BLOCKHEIGHT
 #define RADIUS 3.5
-#define MAPFILE "test.txt"
+#define MAPFILE "map.txt"
 #define INVFILE "inventory.txt"
 #define VERTICALTIME 100
 #define JUMPHEIGHT 4
@@ -58,7 +58,7 @@ class Engine
 {
 	vector<Block> blocks;
 	vector<Texture> textures;
-	Player player { WIDTH / 2, HEIGHT / 2 };
+	Player player { 8, HEIGHT - 7 };
 	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT + INVENTORY_HEIGHT), "TerrariaRemastered" , Style::Titlebar | Style::Close};
 	bool closing = false;
 	Font mainFont;
