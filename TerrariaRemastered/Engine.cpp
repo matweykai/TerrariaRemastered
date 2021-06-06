@@ -160,55 +160,55 @@ void Engine::start_game()
 }
 void Engine::get_textures() 
 {
-	textures.resize(BlockTextures::Stone + 1);
+	textures.resize(BlockTextures::Metal + 1);
 
 	//Player textures
 	Texture player;
-	player.loadFromFile("Player.png");
+	player.loadFromFile("Textures\\Player.png");
 	textures[TexturesID::Player_texture] = player;
 
 	Texture left_player;
-	left_player.loadFromFile("Player_Left.png");
+	left_player.loadFromFile("Textures\\Player_Left.png");
 	textures[TexturesID::Left_Player_texture] = left_player;
 
 	//Inventory textures
 	Texture inv_cell;
-	inv_cell.loadFromFile("Inventory_cell.png");
+	inv_cell.loadFromFile("Textures\\Inventory_cell.png");
 	textures[TexturesID::Inventory_cell] = inv_cell;
 
 	Texture selected_item;
-	selected_item.loadFromFile("SelectedItem.png");
+	selected_item.loadFromFile("Textures\\SelectedItem.png");
 	textures[TexturesID::Selected_item] = selected_item;
 
 	//Blocks textures
 	Texture dirt;
-	dirt.loadFromFile("Dirt.png");
+	dirt.loadFromFile("Textures\\Dirt.png");
 	textures[BlockTextures::Dirt] = dirt;
 
 	Texture grass;
-	grass.loadFromFile("Grass.png");
+	grass.loadFromFile("Textures\\Grass.png");
 	textures[BlockTextures::Grass] = grass;
 
 	Texture stone;
-	stone.loadFromFile("Stone.png");
+	stone.loadFromFile("Textures\\Stone.png");
 	textures[BlockTextures::Stone] = stone;
 
 	Texture leaves;
-	leaves.loadFromFile("Stone.png");
+	leaves.loadFromFile("Textures\\Leaves.png");
 	textures[BlockTextures::Leaves] = leaves;
 
 	Texture tree;
-	tree.loadFromFile("Stone.png");
+	tree.loadFromFile("Textures\\Tree.png");
 	textures[BlockTextures::Tree] = tree;
 
 	Texture metal;
-	metal.loadFromFile("Stone.png");
+	metal.loadFromFile("Textures\\Metal.png");
 	textures[BlockTextures::Metal] = metal;
 
 
 	//Tools textures
 	Texture pickaxe;
-	pickaxe.loadFromFile("Pickaxe.png");
+	pickaxe.loadFromFile("Textures\\Pickaxe.png");
 	textures[TexturesID::Tool_t] = pickaxe;
 }
 
