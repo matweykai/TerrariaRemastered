@@ -5,6 +5,7 @@
 
 #include "Block.h"
 #include "Player.h"
+#include "Tool.h"
 #include <vector>
 #include <windows.h>
 #include <iostream>
@@ -16,7 +17,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-#define WIDTH 50
+#define WIDTH 40
 #define HEIGHT 20
 #define P_HEIGHT 3
 #define P_WIDTH 2
@@ -27,6 +28,7 @@
 #define INVENTORY_HEIGHT 2 * BLOCKHEIGHT
 #define RADIUS 3.5
 #define MAPFILE "test.txt"
+#define INVFILE "inventory.txt"
 
 using namespace sf;
 using namespace std;
@@ -35,12 +37,13 @@ enum TexturesID
 {
 	Player_texture = 0,
 	Inventory_cell,
-	Selected_item
+	Selected_item,
+	Tool_t
 };
 
 enum BlockTextures
 {
-	Dirt = TexturesID::Selected_item + 1,
+	Dirt = TexturesID::Tool_t + 1,
 	Grass,
 	Stone
 };
@@ -50,7 +53,7 @@ class Engine
 	vector<Block> blocks;
 	vector<Texture> textures;
 	Player player { WIDTH / 2, HEIGHT / 2 };
-	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT + INVENTORY_HEIGHT), "TerrariaRemastered" };
+	RenderWindow gameWindow { VideoMode(BLOCKWIDTH * WIDTH, BLOCKHEIGHT * HEIGHT + INVENTORY_HEIGHT), "TerrariaRemastered" , Style::Titlebar | Style::Close};
 	bool closing = false;
 	Font mainFont;
 	int inventory_index = 0;	//Index of selected cell in inventory
@@ -71,6 +74,8 @@ class Engine
 
 	void dump_map(string fileName);
 	bool download_map(string fileName);
+	void dump_inventory(string fileName);
+	bool dowload_inventory(string fileName);
 
 	void movePlayerRight();
 	void movePlayerLeft();
@@ -84,3 +89,4 @@ public:
 };
 
 bool is_end(ifstream* stream);
+int find_space(string str, int start_pos);

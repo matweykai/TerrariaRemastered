@@ -91,20 +91,14 @@ void Engine::start_game()
 {
 	get_textures();
 	mainFont.loadFromFile("C:/WINDOWS/Fonts/arial.ttf");
+	
+	if (!dowload_inventory(INVFILE))
+		player.get_inventory().put_item(new Tool("Pickaxe", &textures[TexturesID::Tool_t]));
 
 	init_map();
 
 	thread falling_thread(&Engine::falling, this);
 	Music_On();
-	
-	//Only for testing
-	Block test_block(0, 0, "Grass", &textures[BlockTextures::Grass]);
-	Block test_block2(0, 0, "Stone", &textures[BlockTextures::Stone]);
-	for (int i = 0; i < 100; i++)
-	{
-		//player.get_inventory().put_item(new Block(test_block));
-		player.get_inventory().put_item(new Block(test_block2));
-	}
 
 	while (gameWindow.isOpen())
 	{
@@ -131,7 +125,9 @@ void Engine::start_game()
 				Coordinates* clicked_block = check_click(Mouse::getPosition(gameWindow));
 				if (clicked_block != nullptr)
 				{
-					break_block(*clicked_block);
+					Tool* temp_tool = dynamic_cast<Tool*>(player.get_inventory().get_inventory()[inventory_index].second);
+					if(temp_tool != nullptr)
+						break_block(*clicked_block);
 
 					delete clicked_block;
 				}
@@ -156,6 +152,7 @@ void Engine::start_game()
 	closing = true;
 
 	falling_thread.join();
+	dump_inventory(INVFILE);
 	dump_map(MAPFILE);
 }
 void Engine::get_textures() 
@@ -185,6 +182,10 @@ void Engine::get_textures()
 	Texture stone;
 	stone.loadFromFile("Stone.png");
 	textures[BlockTextures::Stone] = stone;
+
+	Texture pickaxe;
+	pickaxe.loadFromFile("Pickaxe.png");
+	textures[TexturesID::Tool_t] = pickaxe;
 }
 
 void Engine::control_enter(Event ev)
@@ -433,6 +434,68 @@ void Engine::dump_map(string fileName)
 		file.close();
 	}
 }
+bool Engine::dowload_inventory(string fileName) 
+{
+	ifstream file;
+
+	file.open(fileName);
+
+	if (file.is_open()) 
+	{
+		while (!is_end(&file))
+		{
+			string row;
+
+			int start_pos = 0, space_pos = 0;
+			getline(file, row);
+
+			space_pos = find_space(row, start_pos);
+			string name = row.substr(start_pos, space_pos);
+
+			string count_text = row.substr(name.length(), row.length() - space_pos);
+
+			int count = atoi(count_text.c_str());
+
+			if (name == "Dirt")
+				for(int i = 0; i < count; i++)
+					player.get_inventory().put_item(new Block(0, 0, name, &textures[BlockTextures::Dirt]));
+			
+			else if (name == "Grass")
+				for (int i = 0; i < count; i++)
+					player.get_inventory().put_item(new Block(0, 0, name, &textures[BlockTextures::Grass]));
+
+			else if (name == "Stone")
+				for (int i = 0; i < count; i++)
+					player.get_inventory().put_item(new Block(0, 0, name, &textures[BlockTextures::Stone]));
+
+			else if (name == "Pickaxe")
+				for (int i = 0; i < count; i++)
+					player.get_inventory().put_item(new Tool(name, &textures[TexturesID::Tool_t]));
+		}
+		file.close();
+
+		return true;
+	}
+
+	return false;
+}
+void Engine::dump_inventory(string fileName)
+{
+	ofstream file;
+
+	file.open(fileName);
+
+	if (file.is_open()) 
+	{
+		vector<pair<int, Item*>> temp_inventory = player.get_inventory().get_inventory();
+
+		for (int i = 0; i < INVENTORY_SIZE; i++)
+			if (temp_inventory[i].second != nullptr)
+				file << temp_inventory[i].second->get_name() << " " << temp_inventory[i].first << endl;
+
+		file.close();
+	}
+}
 bool is_end(ifstream* stream)
 {
 	streampos base = stream->tellg();
@@ -443,6 +506,14 @@ bool is_end(ifstream* stream)
 	stream->seekg(base);
 
 	return result;
+}
+int find_space(string str, int start_pos) 
+{
+	for (int i = start_pos; i < str.length(); i++)
+		if (str[i] == ' ')
+			return i;
+
+	return -1;
 }
 void Engine::break_block(Coordinates coordinates)
 {
